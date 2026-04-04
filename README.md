@@ -1,7 +1,7 @@
 # Finance Dashboard UI - Comprehensive Documentation
 
 > **Finance Dashboard UI assignment for the Frontend Developer Intern position at Zorvyn.**
-> 
+>
 > 🌐 **Live Demo:** 🔗 https://zorvyn-finance-dashboard-ui-assignm.vercel.app
 
 A modern, responsive, and dynamic web application for managing and analyzing personal or business finances. This dashboard provides a comprehensive view of transactions, cash flow trends, and categorical expenses, specifically designed with high-quality UI/UX principles, smooth animations, and robust filtering capabilities.
@@ -13,9 +13,11 @@ A modern, responsive, and dynamic web application for managing and analyzing per
 The application is built as a highly modular **Single Page Application (SPA)** using **React** and **Vite**. From data ingestion to visual rendering, the project emphasizes a clean separation of concerns:
 
 - **Component-Driven Architecture**: The UI is broken down into reusable logical pieces (e.g., `Card`, `Button`, `Modal`, `SafeIcon`). Pages (`Dashboard.jsx`, `Transactions.jsx`, `Insights.jsx`) act as containers that consume these smaller presentational components.
-- **Global State Management**: Redux, paired with Redux Thunk, drives the application's central nervous system. 
+- **Global State Management**: Redux, paired with Redux Thunk, drives the application's central nervous system.
   - **Asynchronous Operations**: Data fetching, creating, updating, and deleting transactions are handled gracefully with full `loading` and `isProcessing` states to prevent race conditions or duplicate submissions.
   - **Synchronous Actions**: Global preferences like filters, selected roles, theme (Dark/Light mode), and data grouping configurations reside centrally.
+- **Persistent Mock Data Layer**: Transaction data is persisted to **`localStorage`** via the mock API layer (`src/api/mockApi.js`), ensuring that adds, edits, and deletes survive page refreshes without a real backend. The storage key is versioned (`finance_transactions_v1`) so updates to the seed data propagate cleanly.
+- **SPA Routing Fix**: A `vercel.json` rewrite rule ensures direct URL access and page refreshes (e.g., `/transactions`, `/insights`) are handled correctly in production by always serving `index.html`.
 - **Responsive & Semantic Design**: Leveraging **Tailwind CSS**, the layout smoothly transitions across screen sizes. A collapsible mobile sidebar and adaptive flex/grid configurations ensure information is readable everywhere.
 - **State-of-the-Art Visualizations**: **Apache ECharts** (`echarts-for-react`) handles rendering large sets of financial data smoothly on a canvas, scaling axes automatically and applying theme rules (Dark/Light) inherently.
 
@@ -23,7 +25,7 @@ The application is built as a highly modular **Single Page Application (SPA)** u
 
 ## 🚀 Deep Dive: Output & Features Breakdown
 
-The project delivers three core functional views—Dashboard, Transactions, and Insights—surrounded by global functional layers.
+The project delivers three core functional views — Dashboard, Transactions, and Insights — surrounded by global functional layers.
 
 ### 1. Global Interactions & UI Wrapper
 - **Dark/Light Mode**: Fully integrated theming. Toggling the theme applies an HTML `.dark` class, propagating precise color shifts (`blue-900/30`, `text-white`, `bg-gray-800`) avoiding stark pitch-black contrasts for a premium soft-dark look.
@@ -40,9 +42,9 @@ The entry point of the app, designed to output an immediate health check of the 
 
 ### 3. Transactions Manager View (`/transactions`)
 The power-user interface for manipulating individual records.
-- **Dynamic Data Table**: Outputs all financial records vertically. Each row elegantly pairs distinct iconography (Arrow Up/Down) and color-coding depending on whether it’s an income or expense line item.
+- **Dynamic Data Table**: Outputs all financial records vertically. Each row elegantly pairs distinct iconography (Arrow Up/Down) and color-coding depending on whether it's an income or expense line item.
   - **Mobile-Responsive & Scroll-Free**: Instead of forcing clunky horizontal scrollbars on narrow phones, the table intelligently flexes. Granular details (like category or description) utilize smart word-wrapping, effortlessly jumping to multiple centered lines when space gets tight.
-  - **Unobscured Action Actions**: For `admin` users on touch-devices, action controls (Edit/Delete) are persistently visible rather than hiding behind hover events, drastically improving UX.
+  - **Unobscured Action Controls**: For `admin` users on touch-devices, action controls (Edit/Delete) are persistently visible rather than hiding behind hover events, drastically improving UX.
 - **Advanced Filtering Engine**:
   - **Instant Search**: Free-text filtering over description content and categories.
   - **Type Filter**: Strict gating for Income vs. Expenses.
@@ -71,6 +73,7 @@ Outputs deep calculated intelligence preventing the user from doing mental math.
 - **Styling Architecture**: **Tailwind CSS** heavily utilizing arbitrary values, grid/flex hybrid alignments, and pseudo-classing for flawless transitions.
 - **Data Visualization Engine**: **Apache ECharts** (`echarts` & `echarts-for-react`) operating the responsive HTML5 Canvas charts.
 - **Iconography & Micro-Animations**: **React Icons** and highly orchestrated entry/exit physics via **Framer Motion**.
+- **Mock Persistence**: Browser **localStorage** via a versioned storage key (`finance_transactions_v1`) ensuring seed data and user edits survive page refreshes.
 
 ---
 
@@ -79,6 +82,7 @@ Outputs deep calculated intelligence preventing the user from doing mental math.
 ### Prerequisites
 - Node.js environment (v16.14.0 or higher recommended).
 - Git.
+- Vercel CLI *(optional — only needed to run AI endpoints locally)*: `npm i -g vercel`
 
 ### Installation
 
@@ -99,19 +103,49 @@ Outputs deep calculated intelligence preventing the user from doing mental math.
 
 ### Execution
 
-**To start local dev environment**:
-Due to the serverless AI backend functions (`/api`), the project must be run using Vercel's local CLI to properly proxy the endpoints:
-```bash
-npx vercel dev
-```
-Navigate to the provided Local URL (e.g. `http://localhost:3000/`).
-*(Note: Running standard `npm run dev` will only launch the Vite frontend and the AI endpoints will not connect).*
+**To start the local dev environment:**
 
-**To produce bundle for production environments**:
+```bash
+npm run dev
+```
+
+Navigate to the provided local URL (e.g. `http://localhost:5173/`).
+
+> 💡 **AI Advisor Note:** The AI Financial Advisor module communicates with a Vercel Serverless Function (`/api/analyze`). When running locally with `npm run dev`, this endpoint is not proxied by Vite, so the AI Advisor will fall back to the built-in heuristic engine automatically — all other features work fully. If you want the live AI endpoint to run locally, use the Vercel CLI instead:
+> ```bash
+> npx vercel dev
+> ```
+
+**To produce a bundle for production environments:**
 ```bash
 npm run build
 ```
+
 The output will rest securely in the top-level `/dist` folder. Preview the generated dist environment via:
+
 ```bash
 npm run preview
 ```
+
+---
+
+## 🐛 Known Fixes & Technical Notes
+
+### SPA Routing on Refresh
+Direct URL navigation and hard refreshes on sub-routes (e.g. `/transactions`, `/insights`) previously returned a 404 in production. This is fixed via `vercel.json` at the project root:
+
+```json
+{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
+```
+
+### Mock Data Persistence
+Transaction data is stored in `localStorage` under the key `finance_transactions_v1`. On first load, the app seeds localStorage with `initialTransactions` from `src/utils/mockData.js`. Subsequent adds, edits, and deletes are saved immediately, surviving refreshes.
+
+> If you update `initialTransactions` in `mockData.js` and don't see the changes, clear the old localStorage entry manually:
+> **DevTools → Application → Local Storage → delete `finance_transactions_v1`**
+>
+> Alternatively, bump the `STORAGE_KEY` constant in `src/api/mockApi.js` to a new version (e.g. `finance_transactions_v2`).
