@@ -33,6 +33,8 @@ The project delivers three core functional views—Dashboard, Transactions, and 
 ### 2. Dashboard View (`/`)
 The entry point of the app, designed to output an immediate health check of the user's finances.
 - **Top Metrics Strip**: Calculates **Total Balance**, **Total Income**, and **Total Expenses** accurately by iterating through state transaction arrays. Each metric rests in an animated Framer Motion card.
+- **AI Financial Advisor Module**: A fully integrated AI component that securely communicates with a Vercel Serverless Function (`/api/analyze`) to review transaction data and provide rapid, high-level financial guidance.
+  - **Resilient Fallback Engine**: Engineered to ensure 100% uptime. If the external AI API hits rate limits or cold-starts, the backend gracefully catches the crash and utilizes a custom heuristic math engine to calculate savings rates and top expense drains natively, guaranteeing a dynamic response is always delivered.
 - **Cash Flow Trend (Line Chart)**: Represents money in vs. money out over a timeline. The data is parsed, grouped by `YYYY-MM`, and plotted identically using vibrant opposing paths (green vs. red). Hovering yields confined tooltips to guarantee readability on small screens.
 - **Expenses by Category (Pie & List Chart)**: Provides a visual segmentation of spending habits. It combines an ECharts circle graph with a custom-mapped, responsive list broken into discrete rows detailing specific percentage contributions and dollar amounts per category.
 
@@ -98,10 +100,12 @@ Outputs deep calculated intelligence preventing the user from doing mental math.
 ### Execution
 
 **To start local dev environment**:
+Due to the serverless AI backend functions (`/api`), the project must be run using Vercel's local CLI to properly proxy the endpoints:
 ```bash
-npm run dev
+npx vercel dev
 ```
-Navigate to the provided Local URL (e.g. `http://localhost:5173/`).
+Navigate to the provided Local URL (e.g. `http://localhost:3000/`).
+*(Note: Running standard `npm run dev` will only launch the Vite frontend and the AI endpoints will not connect).*
 
 **To produce bundle for production environments**:
 ```bash

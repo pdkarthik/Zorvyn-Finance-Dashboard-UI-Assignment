@@ -130,9 +130,7 @@ const Transactions = () => {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const exportRef = useRef(null);
 
-  useEffect(() => {
-    dispatch(fetchTransactions());
-  }, [dispatch]);
+  // Removed redundant fetchTransactions to prevent navigation data wiping since App.jsx handles it globally
 
   // Close export menu when clicking outside
   useEffect(() => {
@@ -434,7 +432,11 @@ const Transactions = () => {
                                 <SafeIcon icon={FiIcons.FiEdit2} className="w-3.5 h-3.5" />
                               </button>
                               <button 
-                                onClick={() => dispatch(removeTransaction(t.id))} 
+                                onClick={() => {
+                                  if (window.confirm("Are you sure you want to delete this transaction?")) {
+                                    dispatch(removeTransaction(t.id));
+                                  }
+                                }} 
                                 disabled={isProcessing}
                                 className="p-1.5 rounded-md hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 text-gray-400 transition-colors"
                                 title="Delete"

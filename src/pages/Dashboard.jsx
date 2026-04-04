@@ -5,6 +5,7 @@ import { calculateTotals, groupByCategory, groupByMonth, formatCurrency } from '
 import Card from '../components/common/Card';
 import SafeIcon from '../common/SafeIcon';
 import * as FiIcons from 'react-icons/fi';
+import AiAdvisor from '../components/AiAdvisor';
 
 const StatCard = ({ title, amount, type, icon, delay }) => {
   const colors = {
@@ -70,7 +71,7 @@ const Dashboard = () => {
     },
     grid: { 
       left: '2%', 
-      right: '4%', 
+      right: '8%', 
       bottom: '12%', 
       top: '10%',
       containLabel: true 
@@ -219,6 +220,10 @@ const Dashboard = () => {
             </div>
           )}
         </Card>
+      </div>
+
+      <div className="pt-2">
+        <AiAdvisor />
       </div>
     </div>
   );

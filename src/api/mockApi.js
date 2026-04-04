@@ -66,14 +66,18 @@ export const mockApi = {
     simulateError();
     
     const current = getStoredData();
+    const formattedTx = { 
+      ...updatedTx, 
+      amount: Number(updatedTx.amount), 
+      updatedAt: new Date().toISOString() 
+    };
+    
     const updated = current.map(t => 
-      t.id === updatedTx.id 
-        ? { ...updatedTx, amount: Number(updatedTx.amount), updatedAt: new Date().toISOString() } 
-        : t
+      t.id === updatedTx.id ? formattedTx : t
     );
     
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-    return updatedTx;
+    return formattedTx;
   },
 
   deleteTransaction: async (id) => {
