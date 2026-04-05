@@ -40,11 +40,11 @@ The project delivers three core functional views — Dashboard, Transactions, an
 The entry point of the app, designed to output an immediate health check of the user's finances.
 
 - **Top Metrics Strip**: Calculates **Total Balance**, **Total Income**, and **Total Expenses** accurately by iterating through state transaction arrays. Each metric rests in an animated Framer Motion card.
-- **AI Financial Advisor Module**: A fully integrated AI component powered by Google's Gemini API that reviews transaction data and provides rapid, high-level financial guidance. Each response is transparently labeled with its source.
+- **AI Financial Advisor Module**: A fully integrated AI component powered by the Groq API (utilizing LLaMA 3 models) that reviews transaction data and provides rapid, high-level financial guidance. Each response is transparently labeled with its source.
   - **Dual Source System**: Responses clearly indicate their origin:
-    - `Source: AI` — Real AI-generated advice from Google's Gemini model
+    - `Source: AI` — Real AI-generated advice from the Groq API
     - `Source: Local fallback` — Algorithm-based advice when API quota is exceeded or unavailable
-  - **Resilient Fallback Engine**: Engineered to ensure 100% uptime. If the Gemini API hits rate limits or is unavailable, the backend gracefully falls back to a custom heuristic math engine that calculates savings rates and identifies top expense categories natively, guaranteeing a dynamic response is always delivered.
+  - **Resilient Fallback Engine**: Engineered to ensure 100% uptime. If the Groq API hits rate limits or is unavailable, the backend gracefully falls back to a custom heuristic math engine that calculates savings rates and identifies top expense categories natively, guaranteeing a dynamic response is always delivered.
 - **Cash Flow Trend (Line Chart)**: Represents money in vs. money out over a timeline. The data is parsed, grouped by `YYYY-MM`, and plotted identically using vibrant opposing paths (green vs. red). Hovering yields confined tooltips to guarantee readability on small screens.
 - **Expenses by Category (Pie & List Chart)**: Provides a visual segmentation of spending habits. It combines an ECharts circle graph with a custom-mapped, responsive list broken into discrete rows detailing specific percentage contributions and dollar amounts per category.
 
@@ -125,9 +125,9 @@ Outputs deep calculated intelligence preventing the user from doing mental math.
 npm run dev
 ```
 
-**AI Advisor Setup:** The AI Financial Advisor communicates with a Vercel Serverless Function (`/api/analyze`) using Google's Gemini API. Ensure `GEMINI_API_KEY` is set in your `.env` file. When running locally with `npm run dev`, this endpoint is not proxied by Vite — the advisor automatically falls back to the built-in heuristic engine and all other features work fully.
+**AI Advisor Setup:** The AI Financial Advisor communicates with a Vercel Serverless Function (`/api/analyze`) using the Groq API. Ensure `GROQ_API_KEY` is set in your `.env` file. When running locally with `npm run dev`, this endpoint is not proxied by Vite — the advisor automatically falls back to the built-in heuristic engine and all other features work fully.
 
-> **Free tier quotas:** Limited requests per day/minute. Upgrade to a paid plan for unlimited usage.
+> **Free tier quotas:** Groq provides generous free-tier speed, but is subject to requests-per-minute (RPM) limits. Upgrade to a paid plan for unlimited usage.
 
 To run the live AI endpoint locally, use the Vercel CLI instead:
 

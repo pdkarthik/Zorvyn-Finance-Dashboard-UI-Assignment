@@ -1,5 +1,3 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
-
 export default async function handler(req, res) {
   // CORS configuration for local testing
   res.setHeader("Access-Control-Allow-Credentials", true);
@@ -22,14 +20,11 @@ export default async function handler(req, res) {
   try {
     const { transactions, balance, income, expense } = req.body;
 
-    if (!process.env.GEMINI_API_KEY) {
+    if (!process.env.GROQ_API_KEY) {
       return res
         .status(500)
-        .json({ error: "Missing GEMINI_API_KEY in environment variables." });
+        .json({ error: "Missing GROQ_API_KEY in environment variables." });
     }
-
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
     // Take the most recent transactions to avoid huge payload limits
     const recentTransactions = transactions
@@ -61,18 +56,37 @@ ${recentTransactions}
 `;
 
     try {
-      const result = await model.generateContent(prompt);
-      let responseText = result.response.text();
+      const response = await fetch(
+        "https://api.groq.com/openai/v1/chat/completions",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+          },
+          body: JSON.stringify({
+            model: "llama-3.3-70b-versatile", // Free & fast on Groq
+            max_tokens: 1000,
+            messages: [{ role: "user", content: prompt }],
+          }),
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error?.message || "Groq API error");
+      }
+
+      let responseText = data.choices[0].message.content;
 
       // Clean up any weird markdown bolding
       responseText = responseText.replace(/\*\*/g, "").trim();
 
-      return res
-        .status(200)
-        .json({ advice: responseText, source: "gemini-ai" });
+      return res.status(200).json({ advice: responseText, source: "groq-ai" });
     } catch (apiError) {
       console.warn(
-        "Gemini API Error, using fallback calculation.",
+        "Groq API Error, using fallback calculation.",
         apiError.message,
       );
 
@@ -93,7 +107,6 @@ ${recentTransactions}
         if (amount > highestCategory.amount) highestCategory = { name, amount };
       }
 
-      // Phrase Banks for analysis variance
       const goodMargin = [
         "You are maintaining a very healthy margin, comfortably clearing the standard 20% financial safety baseline. ",
         "Your cash flow is stable and secure, keeping you well above the danger zone. ",
@@ -130,7 +143,6 @@ ${recentTransactions}
         fallbackAdvice += `If you want to rapidly accelerate your portfolio's growth curve in the next 30 days, I strongly advise implementing strict micro-budgets specifically targeting your ${highestCategory.name} expenditures.`;
       }
 
-      // Return fallback response
       return res
         .status(200)
         .json({ advice: fallbackAdvice, source: "fallback" });
