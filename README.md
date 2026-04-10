@@ -1,6 +1,6 @@
-# Finance Dashboard UI - Comprehensive Documentation
+# AI-Powered Finance Dashboard
 
-> **Finance Dashboard UI assignment for the Frontend Developer Intern position at Zorvyn.**
+> **A comprehensive, production-ready frontend architecture built originally as a technical assignment for the Frontend Developer Intern position at Zorvyn.**
 >
 > 🌐 **Live Demo:** 🔗 https://zorvyn-finance-dashboard-ui-assignm.vercel.app
 
