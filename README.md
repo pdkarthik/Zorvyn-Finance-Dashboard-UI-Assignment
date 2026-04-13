@@ -1,10 +1,9 @@
 # AI-Powered Finance Dashboard
 
-> **A comprehensive, production-ready frontend architecture built originally as a technical assignment for the Frontend Developer Intern position at Zorvyn.**
 >
 > 🌐 **Live Demo:** 🔗 https://zorvyn-finance-dashboard-ui-assignm.vercel.app
 
-A modern, responsive, and dynamic web application for managing and analyzing personal or business finances. This dashboard provides a comprehensive view of transactions, cash flow trends, and categorical expenses, specifically designed with high-quality UI/UX principles, smooth animations, and robust filtering capabilities.
+> **A modern, responsive, and dynamic web application for managing and analyzing personal or business finances. This dashboard provides a comprehensive view of transactions, cash flow trends, and categorical expenses, specifically designed with high-quality UI/UX principles, smooth animations, and robust filtering capabilities.**
 
 ---
 
