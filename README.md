@@ -108,7 +108,7 @@ Outputs deep calculated intelligence preventing the user from doing mental math.
 2. **Navigate into the project root**:
 
    ```bash
-   cd Zorvyn-Finance-Dashboard-Assignment
+   cd AI-Powered_Finance_Dashboard
    ```
 
 3. **Install exact dependencies**:
